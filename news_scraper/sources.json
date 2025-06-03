@@ -1,0 +1,24 @@
+{
+  "left": [
+    "https://thewire.in/",
+    "https://www.thehindu.com/",
+    "https://scroll.in/",
+    "https://newsclick.in/",
+    "https://thequint.com/",
+    "https://caravanmagazine.in/"
+  ],
+  "center": [
+    "https://www.ndtv.com/",
+    "https://www.indiatoday.in/",
+    "https://www.theprint.in/",
+    "https://www.hindustantimes.com/",
+    "https://www.livemint.com/"
+  ],
+  "right": [
+    "https://www.opindia.com/",
+    "https://swarajyamag.com/",
+    "https://www.republicworld.com/",
+    "https://organiser.org/",
+    "https://www.news18.com/"
+  ]
+}

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Political Bias Detector</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anta&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">Whether you're a journalist, reader, or student, this tool can help you approach news with a more critical, informed eye.</nav>
+    <div class="container">
+        <div class="header">
+            <div class="header-left col">
+                <div class="item">
+                    <h1>Detect</h1>
+                    <h1>Bias</h1>
+                </div>
+            </div>
+            <div class="header-right col">
+                <div class="play-wrapper">
+                    <div class="play-btn">
+                        <ion-icon name="play-sharp"></ion-icon>
+                    </div>
+                </div>
+                <div class="pattern">* * *</div>
+                <div class="copy">
+                   <p>
+                        Whether you're reading something online or writing your own content, this tool helps you analyze language to uncover subtle leanings toward liberal, conservative, or neutral perspectives — all with a confidence score.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btns col">
+                <div class="btn">
+                    <ion-icon name="analytics"></ion-icon>
+                    <span>Stay Informed</span>
+                </div>
+                 <div class="btn">
+                    <ion-icon name="glasses"></ion-icon>
+                    <span>Stay Unbiased</span>
+                </div>
+            </div>
+            <div class="divider col">
+                <div class="hr"></div>
+            </div>
+        </div>
+        <div>
+            <div class="card">
+                <div class="within-card">
+                    <label>
+                        <input type="radio" name="inputType" value="text" checked> Text
+                    </label>
+                    <label>
+                        <input type="radio" name="inputType" value="url"> URL
+                    </label>
+                </div>
+                <textarea id="textInput" rows="8" cols="60" placeholder="Paste your news article here..."></textarea>
+                <input id="urlInput" type="text" placeholder="Enter article URL" style="display: none;" /><br />
+
+                <button id="predictBtn">Predict Bias</button>
+                <div id="result"></div>
+            </div>
+            <div class="card-wrapper"></div>
+            <div class="arrow">
+                <ion-icon name="arrow-forward-sharp"></ion-icon>
+            </div>
+        </div>
+        <div class="marquee">
+            <span>
+                Our AI model is trained on a large dataset of politically labeled text. When you submit content, it breaks it down using natural language processing (NLP) and classifies it as left-leaning, right-leaning, or neutral.
+            </span>
+        </div>
+    </div>
+    <script>
+        // Input type toggle logic
+        const predictBtn = document.getElementById('predictBtn');
+        const textInput = document.getElementById('textInput');
+        const urlInput = document.getElementById('urlInput');
+        const resultDiv = document.getElementById('result');
+        const inputTypeRadios = document.querySelectorAll('input[name="inputType"]');
+
+        inputTypeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'text') {
+                    textInput.style.display = 'block';
+                    urlInput.style.display = 'none';
+                } else {
+                    textInput.style.display = 'none';
+                    urlInput.style.display = 'block';
+                }
+            });
+        });
+
+        predictBtn.addEventListener('click', async () => {
+            const inputType = document.querySelector('input[name="inputType"]:checked').value;
+            const text = inputType === 'text' ? textInput.value.trim() : urlInput.value.trim();
+            if (!text) {
+                alert("Please enter some text or a valid URL!");
+                return;
+            }
+
+            resultDiv.textContent = "Loading...";
+
+            try {
+                // Use relative path for local Flask backend
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ inputType, text }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    resultDiv.textContent = `Error: ${errorData.error || response.statusText}`;
+                    return;
+                }
+
+                const data = await response.json();
+                resultDiv.textContent = `Bias: ${data.label} (Confidence: ${(data.confidence * 100).toFixed(2)}%)`;
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // GSAP animations
+        gsap.from(".nav-logo, .nav-links > a", 2, {
+            top:"30px",
+            opacity: 0,
+            ease: "power4.inOut",
+            delay:1,
+            stagger:{
+                amount: 0.3,
+            },
+        });
+
+        gsap.from("h1", 2, {
+            y: 50,
+            opacity: 0,
+            ease: "power4.inOut",
+            delay:1.5,
+            stagger:{
+                amount: 0.3,
+            },
+        });
+
+        gsap.from(".play-wrapper, .pattern, .copy", 2, {
+            scaleY: 0,
+            ease: "power3.inOut",
+            delay:2.5,
+            stagger:{
+                amount: 0.3,
+            },
+        });
+
+        gsap.from(".hr", 2, {
+            width: 0,
+            ease: "power3.inOut",
+            delay:3,
+        });
+
+        gsap.from(".btns", 2, {
+            x: 50,
+            opacity:0,
+            ease: "power3.inOut",
+            delay:3,
+        });
+
+        gsap.from(".play-btn", 2, {
+            scale: 0,
+            ease: "power3.inOut",
+            delay:3,
+        });
+
+        gsap.from(".hero-wrapper", 2, {
+            width: "100%",
+            ease: "power3.inOut",
+            delay:3,
+        });
+
+        gsap.from(".arrow", 2, {
+            scale: 0,
+            ease: "power3.inOut",
+            delay:3,
+        });
+
+        gsap.from(".marquee", 2, {
+            bottom:"-10rem",
+            ease: "power3.inOut",
+            delay:4,
+        });
+    </script>
+</body>
+</html>
