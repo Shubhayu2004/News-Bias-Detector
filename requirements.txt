@@ -31,7 +31,7 @@ Jinja2==3.1.6
 joblib==1.5.1
 jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
-keras==3.10.0
+keras==3.11.0
 libclang==18.1.1
 lxml==5.4.0
 lxml_html_clean==0.4.2
